@@ -1,5 +1,5 @@
-const CACHE = 'member-lookup-v1';
-const FILES = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'member-lookup-v3';
+const FILES = ['/member-lookup/', '/member-lookup/index.html', '/member-lookup/manifest.json', '/member-lookup/icon-192.png', '/member-lookup/icon-512.png'];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(
@@ -14,8 +14,7 @@ self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(k) { return k !== CACHE; })
-            .map(function(k) { return caches.delete(k); })
+        keys.map(function(k) { return caches.delete(k); })
       );
     })
   );
@@ -24,8 +23,8 @@ self.addEventListener('activate', function(e) {
 
 self.addEventListener('fetch', function(e) {
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      return cached || fetch(e.request);
+    fetch(e.request).catch(function() {
+      return caches.match(e.request);
     })
   );
 });
